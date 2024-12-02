@@ -10,12 +10,30 @@ android {
         applicationId "cn.moon.ql"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 108
+        versionName "1.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        ci {
+            final String keystorePropertiesFile = rootProject.file('app/ci-keystore.properties')
+            final Properties keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+    flavorDimensions = ['default']
+    productFlavors {
+        ci {
+            dimension 'default'
+            signingConfig signingConfigs.ci
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -25,6 +43,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -36,4 +57,7 @@ dependencies {
 
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+//    implementation libs.annotation
+//    implementation libs.lifecycle.livedata.ktx
+//    implementation libs.lifecycle.viewmodel.ktx
 }

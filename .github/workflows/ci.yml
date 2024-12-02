@@ -1,0 +1,35 @@
+name:  APK 打包
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: 设置Java环境
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 打包
+      run: |
+        chmod +x gradlew
+        ./gradlew assembleCiRelease
+
+    - name: 发布
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          app/build/outputs/apk/ci/**/*.*
